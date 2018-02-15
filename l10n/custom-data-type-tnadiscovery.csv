@@ -1,0 +1,24 @@
+key,de-DE,en-US
+custom.data.type.tnadiscovery.name,TNA-Discovery-Verknüpfung,TNA-Discovery-Link
+custom.data.type.tnadiscovery.edit.button|icon,edit,edit
+custom.data.type.tnadiscovery.remove.button|icon,trash,trash
+custom.data.type.tnadiscovery.modal.form.url.placeholder,TNA-Discovery-Verknüpfung,TNA-Discovery-Link
+custom.data.type.tnadiscovery.modal.form.text.label,Text,Text
+custom.data.type.tnadiscovery.edit.no_valid_tnadiscovery,Keine valide TNA-Discovery-Verknüpfung,No valid TNA-Discovery-Link
+custom.data.type.tnadiscovery.edit.no_tnadiscovery,Keine TNA-Discovery-Verknüpfung gesetzt,No TNA-Discovery-Link
+custom.data.type.tnadiscovery.modal.form.text.count,Anzahl Vorschläge,Count of suggestions
+custom.data.type.tnadiscovery.modal.form.text.countX,Vorschläge,Suggestions
+custom.data.type.tnadiscovery.modal.form.text.searchbar,Suchbegriff eingeben,Type searchterm
+custom.data.type.tnadiscovery.modal.form.text.searchbar.placeholder, tippen ... ,type sth. ...
+custom.data.type.tnadiscovery.modal.form.text.result.label,Gewählter Eintrag,Choosen entry
+custom.data.type.tnadiscovery.modal.form.text.result.placeholder,noch leer,empty
+custom.data.type.tnadiscovery.modal.form.text.uri.label,Zugehörige URI,Choosen URI
+custom.data.type.tnadiscovery.modal.form.text.uri.label.placeholder,noch leer,empty
+custom.data.type.tnadiscovery.url.tooltip,zu **%(name)s** springen,jump to **%(name)s**
+custom.data.type.tnadiscovery.modal.form.title.label,Titel,Title
+custom.data.type.tnadiscovery.modal.form.refnumber.label,Referenz-Nummer,ReferenceNumber
+custom.data.type.tnadiscovery.modal.form.url.label,TNA-Discovery-URL,TNA-Discovery-URL
+custom.data.type.tnadiscovery.modal.form.location.label,Aufbewahrungsort,LocationHeld
+custom.data.type.tnadiscovery.modal.form.id.label,ID,ID
+custom.data.type.tnadiscovery.modal.form.description.label,Beschreibung,Description
+custom.data.type.tnadiscovery.modal.form.text.loading,lade Informationen,loading information
