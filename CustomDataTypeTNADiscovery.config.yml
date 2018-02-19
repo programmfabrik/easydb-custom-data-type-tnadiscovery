@@ -1,5 +1,5 @@
 plugin:
-  name: easydb-custom-data-type-tnadiscovery
+  name: custom-data-type-tnadiscovery
   version: 1.0
   server:
     api-version:
