@@ -1,6 +1,13 @@
 plugin:
   name: custom-data-type-tnadiscovery
   version: 1.0
+  url: https://github.com/programmfabrik/easydb-custom-data-type-tnadiscovery
+  displayname:
+    de-DE: tnadiscovery-Verknüpfung
+    en-US: tnadiscovery-Referencing
+  info:
+    de-DE: Stellt Verknüpfungen mit den Discovery-System des National Archive London her.
+    en-US: Use for references to entities of the discoverydystem of the National Archive London.
   server:
     api-version:
       require: 1
