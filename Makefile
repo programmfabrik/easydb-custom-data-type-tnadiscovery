@@ -9,8 +9,6 @@ INSTALL_FILES = \
 	$(WEB)/l10n/cultures.json \
 	$(WEB)/l10n/de-DE.json \
 	$(WEB)/l10n/en-US.json \
-	$(WEB)/l10n/es-ES.json \
-	$(WEB)/l10n/it-IT.json \
 	$(JS) \
 	CustomDataTypeTNADiscovery.config.yml
 
