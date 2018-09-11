@@ -38,8 +38,11 @@ class CustomDataTypeTNADiscovery extends CustomDataTypeWithCommons
 
   #######################################################################
   # show tooltip with loader and then additional info
-  __getAdditionalTooltipInfo: (tnadiscoveryID, tooltip, extendedInfo_xhr) ->
+  __getAdditionalTooltipInfo: (uri, tooltip, extendedInfo_xhr) ->
     that = @
+
+    uri = decodeURIComponent(uri)
+    uri = uri.replace('http://discovery.nationalarchives.gov.uk/details/r/', '')
 
     # abort eventually running request
     if extendedInfo_xhr.xhr != undefined
@@ -47,7 +50,7 @@ class CustomDataTypeTNADiscovery extends CustomDataTypeWithCommons
 
     # start new request to tnadiscovery-API
     # http://C3218935
-    extendedInfo_xhr.xhr = new (CUI.XHR)(url: location.protocol + '//jsontojsonp.gbv.de/?url=http%3A%2F%2Fdiscovery.nationalarchives.gov.uk%2FAPI%2Frecords%2Fv1%2Fdetails%2F' + tnadiscoveryID)
+    extendedInfo_xhr.xhr = new (CUI.XHR)(url: location.protocol + '//jsontojsonp.gbv.de/?url=http%3A%2F%2Fdiscovery.nationalarchives.gov.uk%2FAPI%2Frecords%2Fv1%2Fdetails%2F' + uri)
     extendedInfo_xhr.xhr.start()
     .done((data, status, statusText) ->
       htmlContent = ''
@@ -74,17 +77,21 @@ class CustomDataTypeTNADiscovery extends CustomDataTypeWithCommons
   #######################################################################
   # handle suggestions-menu  (POPOVER)
   #######################################################################
-  __updateSuggestionsMenu: (cdata, cdata_form, suggest_Menu, searchsuggest_xhr) ->
+  __updateSuggestionsMenu: (cdata, cdata_form, searchstring, input, suggest_Menu, searchsuggest_xhr, layout) ->
     that = @
 
     delayMillisseconds = 200
 
     setTimeout ( ->
 
-        tnadiscovery_searchstring = cdata_form.getFieldsByName("searchbarInput")[0].getValue()
-        tnadiscovery_searchstring = '"' + encodeURIComponent(tnadiscovery_searchstring) + '"'
-        tnadiscovery_searchstring = encodeURIComponent(tnadiscovery_searchstring)
-        tnadiscovery_countSuggestions = cdata_form.getFieldsByName("countOfSuggestions")[0].getValue()
+        tnadiscovery_searchstring = searchstring
+        tnadiscovery_countSuggestions = 20
+
+        if (cdata_form)
+          tnadiscovery_searchstring = cdata_form.getFieldsByName("searchbarInput")[0].getValue()
+          tnadiscovery_searchstring = '"' + encodeURIComponent(tnadiscovery_searchstring) + '"'
+          tnadiscovery_searchstring = encodeURIComponent(tnadiscovery_searchstring)
+          tnadiscovery_countSuggestions = cdata_form.getFieldsByName("countOfSuggestions")[0].getValue()
 
         if tnadiscovery_searchstring.length < 2
             return
@@ -146,16 +153,14 @@ class CustomDataTypeTNADiscovery extends CustomDataTypeWithCommons
                 cdata.description = jsonValue.description
                 cdata.conceptName = jsonValue.referenceNumber
                 cdata.conceptURI = jsonValue.discoveryURL
-
-                # lock in form
-                cdata_form.getFieldsByName("title")[0].storeValue(cdata.title).displayValue()
-                cdata_form.getFieldsByName("referenceNumber")[0].storeValue(cdata.referenceNumber).displayValue()
-                # nach eadb5-Update durch "setText" ersetzen und "__checkbox" rausnehmen
-                cdata_form.getFieldsByName("discoveryURL")[0].__checkbox.setText(cdata.discoveryURL)
-                cdata_form.getFieldsByName("discoveryURL")[0].show()
-
-                # clear searchbar
-                cdata_form.getFieldsByName("searchbarInput")[0].setValue('')
+                
+                # update the layout in form
+                that.__updateResult(cdata, layout)
+                # hide suggest-menu
+                suggest_Menu.hide()
+                # close popover
+                if that.popover
+                  that.popover.hide()
               items: menu_items
 
             # if no hits set "empty" message to menu
@@ -220,40 +225,6 @@ class CustomDataTypeTNADiscovery extends CustomDataTypeWithCommons
               label: $$("custom.data.type.tnadiscovery.modal.form.text.searchbar")
           placeholder: $$("custom.data.type.tnadiscovery.modal.form.text.searchbar.placeholder")
           name: "searchbarInput"
-        }
-    fields.push option
-    # title
-    option =  {
-          form:
-            label: $$("custom.data.type.tnadiscovery.modal.form.title.label")
-          type: CUI.Output
-          name: "title"
-          data: {title: cdata.title}
-        }
-    fields.push option
-
-    # referenceNumber
-    option =  {
-          form:
-            label: $$("custom.data.type.tnadiscovery.modal.form.refnumber.label")
-          type: CUI.Output
-          name: "referenceNumber"
-          data: {referenceNumber: cdata.referenceNumber}
-        }
-    fields.push option
-    # discoveryURL
-    option =  {
-          form:
-            label: $$("custom.data.type.tnadiscovery.modal.form.url.label")
-          type: CUI.FormButton
-          name: "discoveryURL"
-          icon: new CUI.Icon(class: "fa-external-link")
-          text: cdata.discoveryURL
-          onClick: (evt,button) =>
-            window.open cdata.discoveryURL, "_blank"
-          onRender : (_this) =>
-            if cdata.discoveryURL == ''
-              _this.hide()
         }
     fields.push option
 
@@ -337,10 +308,99 @@ class CustomDataTypeTNADiscovery extends CustomDataTypeWithCommons
 
 
   #######################################################################
-  # renders details-output of record
-  renderDetailOutput: (data, top_level_data, opts) ->
-    @__renderButtonByData(data[@name()])
+  # update result in Masterform
+  __updateResult: (cdata, layout) ->
+    that = @
+    # if field is not empty
+    if cdata?.conceptURI
+      # die uuid einkürzen..
+      displayURI = cdata.conceptURI
+      displayURI = displayURI.replace('http://', '')
+      displayURI = displayURI.replace('https://', '')
+      uriParts = displayURI.split('/')
+      uuid = uriParts.pop()
+      if uuid.length > 10
+        uuid = uuid.substring(0,5) + '…'
+        uriParts.push(uuid)
+        displayURI = uriParts.join('/')
 
+      info = new CUI.VerticalLayout
+        class: 'ez5-info_dante'
+        top:
+          content:
+            [
+              new CUI.Label
+                text: '[' + cdata.referenceNumber + ']'
+                multiline: true
+                manage_overflow: true
+              new CUI.Label
+                text: cdata.title
+                multiline: true
+                manage_overflow: true
+              new CUI.Label
+                text: cdata.description
+                multiline: true
+                manage_overflow: true
+              new CUI.Label
+                text: '[' + cdata.locationHeld + ']'
+                multiline: true
+                manage_overflow: true
+            ]
+        bottom:
+          content:
+            new CUI.Button
+              name: "outputButtonHref"
+              appearance: "flat"
+              size: "normal"
+              text: displayURI
+              tooltip:
+                markdown: true
+                placement: 'nw'
+                content: (tooltip) ->
+                  # get jskos-details-data
+                  encodedURI = encodeURIComponent(cdata.conceptURI)
+                  extendedInfo_xhr = { "xhr" : undefined }
+                  that.__getAdditionalTooltipInfo(encodedURI, tooltip, extendedInfo_xhr)
+                  # loader, until details are xhred
+                  new CUI.Label(icon: "spinner", text: $$('custom.data.type.dante.modal.form.popup.loadingstring'))
+              onClick: (evt,button) =>
+                  window.open cdata.conceptURI, "_blank"
+
+      layout.replace(info, 'center')
+      layout.addClass('ez5-linked-object-edit')
+      options =
+        class: 'ez5-linked-object-container'
+      layout.__initPane(options, 'center')
+    if ! cdata?.conceptURI
+      suggest_Menu_directInput
+
+      inputX = new CUI.Input
+                  class: "pluginDirectSelectEditInput"
+                  undo_and_changed_support: false
+                  name: "directSelectInput"
+                  content_size: false
+                  onKeyup: (input) =>
+                    # do suggest request and show suggestions
+                    searchstring = input.getValueForInput()
+                    @__updateSuggestionsMenu(cdata, 0, searchstring, input, suggest_Menu_directInput, searchsuggest_xhr, layout)
+      inputX.render()
+
+      # init suggestmenu
+      suggest_Menu_directInput = new CUI.Menu
+          element : inputX
+          use_element_width_as_min_width: true
+
+      # init xhr-object to abort running xhrs
+      searchsuggest_xhr = { "xhr" : undefined }
+
+      layout.replace(inputX, 'center')
+      layout.removeClass('ez5-linked-object-edit')
+      options =
+        class: ''
+      layout.__initPane(options, 'center')
+
+    # did data change?
+    that.__setEditorFieldStatus(cdata, layout)
 
   #######################################################################
   # renders the "result" in original form (outside popover)
@@ -364,7 +424,6 @@ class CustomDataTypeTNADiscovery extends CustomDataTypeWithCommons
           text: " "
         new CUI.ButtonHref
           name: "outputButtonHref"
-          appearance: "important"
           href: cdata.discoveryURL
           target: "_blank"
           icon_left: new CUI.Icon(class: "fa-external-link")
@@ -388,63 +447,6 @@ class CustomDataTypeTNADiscovery extends CustomDataTypeWithCommons
       ]
 
     list.DOM
-
-
-  #######################################################################
-  # update result in Masterform
-  __updateResult: (cdata, layout) ->
-    btn = @__renderButtonByData(cdata)
-    layout.replace(btn, "bottom")
-
-
-  #######################################################################
-  # buttons, which open and close popover
-  __renderEditorInputPopover: (data, cdata) ->
-
-    layout = new CUI.VerticalLayout
-      top:
-        content:
-            new CUI.Buttonbar(
-              buttons: [
-                  new CUI.Button
-                      text: ""
-                      icon: 'edit'
-                      group: "groupA"
-
-                      onClick: (ev, btn) =>
-                        @showEditPopover(btn, cdata, layout)
-
-                  new CUI.Button
-                      text: ""
-                      icon: 'trash'
-                      group: "groupA"
-                      onClick: (ev, btn) =>
-                        # delete data
-                        cdata = {
-                            conceptName : ''
-                            conceptURI : ''
-                            discoveryID : ''
-                            discoveryURL : ''
-                            referenceNumber : ''
-                            locationHeld : ''
-                            title : ''
-                            description : ''
-                        }
-                        data[@name()] = cdata
-                        # trigger form change
-                        @__updateResult(cdata, layout)
-                        CUI.Events.trigger
-                          node: @__layout
-                          type: "editor-changed"
-                        CUI.Events.trigger
-                          node: layout
-                          type: "editor-changed"
-              ]
-            )
-      center: {}
-      bottom: {}
-    @__updateResult(cdata, layout)
-    layout
 
   #######################################################################
   # zeige die gewählten Optionen im Datenmodell unter dem Button an
