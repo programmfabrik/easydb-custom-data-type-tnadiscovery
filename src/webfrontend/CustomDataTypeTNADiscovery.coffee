@@ -89,9 +89,10 @@ class CustomDataTypeTNADiscovery extends CustomDataTypeWithCommons
 
         if (cdata_form)
           tnadiscovery_searchstring = cdata_form.getFieldsByName("searchbarInput")[0].getValue()
-          tnadiscovery_searchstring = '"' + encodeURIComponent(tnadiscovery_searchstring) + '"'
-          tnadiscovery_searchstring = encodeURIComponent(tnadiscovery_searchstring)
           tnadiscovery_countSuggestions = cdata_form.getFieldsByName("countOfSuggestions")[0].getValue()
+
+        tnadiscovery_searchstring = '"' + encodeURIComponent(tnadiscovery_searchstring) + '"'
+        tnadiscovery_searchstring = encodeURIComponent(tnadiscovery_searchstring)
 
         if tnadiscovery_searchstring.length < 2
             return
@@ -153,7 +154,7 @@ class CustomDataTypeTNADiscovery extends CustomDataTypeWithCommons
                 cdata.description = jsonValue.description
                 cdata.conceptName = jsonValue.referenceNumber
                 cdata.conceptURI = jsonValue.discoveryURL
-                
+
                 # update the layout in form
                 that.__updateResult(cdata, layout)
                 # hide suggest-menu
