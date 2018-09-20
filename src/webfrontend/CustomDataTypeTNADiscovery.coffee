@@ -326,7 +326,7 @@ class CustomDataTypeTNADiscovery extends CustomDataTypeWithCommons
         displayURI = uriParts.join('/')
 
       info = new CUI.VerticalLayout
-        class: 'ez5-info_dante'
+        class: 'ez5-info_commonPlugin'
         top:
           content:
             [
