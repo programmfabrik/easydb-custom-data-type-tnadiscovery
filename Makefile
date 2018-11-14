@@ -11,21 +11,20 @@ INSTALL_FILES = \
 	$(WEB)/l10n/de-DE.json \
 	$(WEB)/l10n/en-US.json \
 	$(JS) \
+	$(CSS) \
 	CustomDataTypeTNADiscovery.config.yml
 
 COFFEE_FILES = easydb-library/src/commons.coffee \
 	src/webfrontend/CustomDataTypeTNADiscovery.coffee
 
+SCSS_FILES = src/webfrontend/css/main.scss
+
 all: build
 
 include easydb-library/tools/base-plugins.make
 
-build: code $(L10N)
+build: code css
 
-code: $(JS)
+code: $(JS) $(L10N)
 
 clean: clean-base
-
-wipe: wipe-base
-
-.PHONY: clean wipe
