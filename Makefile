@@ -7,15 +7,15 @@ L10N_GOOGLE_GID = 578343553
 L10N2JSON = python easydb-library/tools/l10n2json.py
 
 INSTALL_FILES = \
-	$(WEB)/l10n/cultures.json \
-	$(WEB)/l10n/de-DE.json \
-	$(WEB)/l10n/en-US.json \
-	$(JS) \
-	$(CSS) \
-	CustomDataTypeTNADiscovery.config.yml
+    $(WEB)/l10n/cultures.json \
+    $(WEB)/l10n/de-DE.json \
+    $(WEB)/l10n/en-US.json \
+    $(JS) \
+    $(CSS) \
+    CustomDataTypeTNADiscovery.config.yml
 
 COFFEE_FILES = easydb-library/src/commons.coffee \
-	src/webfrontend/CustomDataTypeTNADiscovery.coffee
+    src/webfrontend/CustomDataTypeTNADiscovery.coffee
 
 SCSS_FILES = src/webfrontend/css/main.scss
 

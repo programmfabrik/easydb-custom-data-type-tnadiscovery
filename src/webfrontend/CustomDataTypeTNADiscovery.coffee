@@ -82,7 +82,7 @@ class CustomDataTypeTNADiscovery extends CustomDataTypeWithCommons
   #######################################################################
   # handle suggestions-menu  (POPOVER)
   #######################################################################
-  __updateSuggestionsMenu: (cdata, cdata_form, searchstring, input, suggest_Menu, searchsuggest_xhr, layout) ->
+  __updateSuggestionsMenu: (cdata, cdata_form, searchstring, input, suggest_Menu, searchsuggest_xhr, layout, opts) ->
     that = @
 
     delayMillisseconds = 200
@@ -161,7 +161,7 @@ class CustomDataTypeTNADiscovery extends CustomDataTypeWithCommons
                 cdata.conceptURI = jsonValue.discoveryURL
 
                 # update the layout in form
-                that.__updateResult(cdata, layout)
+                that.__updateResult(cdata, layout, opts)
                 # hide suggest-menu
                 suggest_Menu.hide()
                 # close popover
@@ -315,7 +315,7 @@ class CustomDataTypeTNADiscovery extends CustomDataTypeWithCommons
 
   #######################################################################
   # update result in Masterform
-  __updateResult: (cdata, layout) ->
+  __updateResult: (cdata, layout, opts) ->
     that = @
     # if field is not empty
     if cdata?.conceptURI
@@ -388,7 +388,7 @@ class CustomDataTypeTNADiscovery extends CustomDataTypeWithCommons
                   onKeyup: (input) =>
                     # do suggest request and show suggestions
                     searchstring = input.getValueForInput()
-                    @__updateSuggestionsMenu(cdata, 0, searchstring, input, suggest_Menu_directInput, searchsuggest_xhr, layout)
+                    @__updateSuggestionsMenu(cdata, 0, searchstring, input, suggest_Menu_directInput, searchsuggest_xhr, layout, opts)
       inputX.render()
 
       # init suggestmenu
