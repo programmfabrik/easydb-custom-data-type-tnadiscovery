@@ -9,6 +9,23 @@ The Plugins uses <http://discovery.nationalarchives.gov.uk/API/> for the autocom
 
 There is no custom configuration yet.
 
+## saved data
+* conceptName
+    * Preferred label of the linked record
+* conceptURI
+    * URI to linked record
+* discoveryID
+    * ID in discovery-system
+* discoveryURL
+    * URL in discovery-system
+* referenceNumber
+* locationHeld
+* title
+* description
+* _fulltext
+    * easydb-fulltext
+* _standard
+    * easydb-standard
 
 ## sources
 
