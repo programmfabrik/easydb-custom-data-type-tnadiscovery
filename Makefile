@@ -15,14 +15,15 @@ INSTALL_FILES = \
 COFFEE_FILES = easydb-library/src/commons.coffee \
     src/webfrontend/CustomDataTypeTNADiscovery.coffee
 
-SCSS_FILES = src/webfrontend/css/main.scss
+CSS_FILE = src/webfrontend/css/main.css
 
 all: build
 
 include easydb-library/tools/base-plugins.make
 
-build: code css buildinfojson
+build: code buildinfojson
 
 code: $(JS) $(L10N)
+	    cat $(CSS_FILE) >> build/webfrontend/custom-data-type-tnadiscovery.css
 
 clean: clean-base
